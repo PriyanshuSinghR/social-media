@@ -1,22 +1,59 @@
-import logo from './logo.svg';
+import { Route, Routes } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.min.css';
 import './App.css';
+import { Loader } from './components/Loader';
+import { SignIn } from './pages/SignIn';
+import { SignUp } from './pages/SignUp';
+import { ToastContainer } from 'react-toastify';
+
+import { Home } from './pages/Home';
+import { RequireAuth } from './components/RequireAuth';
+import NavigationBar from './components/NavigationBar';
+import { useContext } from 'react';
+import { SocialContext } from './context/SocialContext';
+import { Explore } from './pages/Explore';
+import { Bookmark } from './pages/Bookmark';
+import { Liked } from './pages/Liked';
 
 function App() {
+  const { state, dispatch } = useContext(SocialContext);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+      <ToastContainer
+        position="top-right"
+        autoClose={1000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover={false}
+        theme="dark"
+      />
+      {state.isLoggedIn && (
+        <div
+          style={{
+            backgroundColor: 'black',
+            position: 'fixed',
+            width: '100%',
+            zIndex: 1,
+            boxShadow: '0 7px 30px 0 black',
+          }}
         >
-          Learn React
-        </a>
+          <NavigationBar />
+        </div>
+      )}
+      <header className="App-header">
+        {/* <Loader /> */}
+        <Routes>
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/explore" element={<Explore />} />
+          <Route path="/bookmark" element={<Bookmark />} />
+          <Route path="/liked" element={<Liked />} />
+        </Routes>
       </header>
     </div>
   );

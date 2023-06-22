@@ -1,12 +1,3 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
@@ -14,18 +5,10 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #1c2440;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
-}
-
-.App-link {
-  color: #61dafb;
 }
 
 @keyframes App-logo-spin {
@@ -35,4 +18,100 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.links {
+  display: flex;
+}
+
+.links a {
+  color: #d9d9d9;
+  font-size: 1.2rem;
+  margin: 1rem;
+}
+
+.link :hover {
+  color: rgb(175 39 35);
+}
+
+.card {
+  transform: scale(1);
+  opacity: 10;
+  transition: all 350ms ease-in-out;
+}
+.card:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  /* z-index: 2; */
+}
+
+.add-fav :hover {
+  color: red;
+}
+
+.submit-button {
+  transform: scale(1);
+  opacity: 10;
+  transition: all 150ms ease-in-out;
+}
+.submit-button:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  /* z-index: 2; */
+}
+
+.shop-now {
+  transform: scale(1);
+  opacity: 10;
+  transition: all 150ms ease-in-out;
+}
+.shop-now:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  background-color: red;
+}
+
+.button-shadow:hover {
+  box-shadow: 0 0 20px rgb(175 39 35);
+}
+
+.button-fav:hover > .show-fav {
+  color: red;
+}
+
+.form-input-field {
+  width: 100%;
+  flex-grow: 1;
+  border-radius: 0.25rem;
+  padding: 0.75rem;
+  outline: none;
+  border: 2px solid rgb(172, 170, 170);
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+.form-input-field:hover {
+  border: 0.125rem solid purple;
+}
+
+.nav-down:hover {
+  background-color: rgb(220 240 255);
+  border-radius: 5px;
+}
+
+.navlink-border {
+  padding: 10px 20px;
+  font-size: 18px;
+}
+
+.navlink-border:hover {
+  background-color: rgb(108, 131, 148);
+  border-radius: 5px;
+}
+
+[contenteditable='true']:focus {
+  outline: none;
+}
+[contenteditable='true']:empty::before {
+  color: #e2e2e292;
+  content: attr(placeholder);
 }
