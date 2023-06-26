@@ -115,3 +115,7 @@
   color: #e2e2e292;
   content: attr(placeholder);
 }
+
+.select-button:hover {
+  background-color: rgb(31, 31, 31);
+}

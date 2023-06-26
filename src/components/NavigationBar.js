@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import { SocialContext } from '../context/SocialContext';
-import { Popup } from './Popup';
 import { toast } from 'react-toastify';
 
 const NavigationBar = () => {

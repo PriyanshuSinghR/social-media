@@ -5,22 +5,33 @@ import React, { useContext, useEffect } from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { SocialContext } from '../context/SocialContext';
+import { Popup } from './Popup';
+import { UpdatePost } from './UpdatePost';
 
 export const PostCard = ({ post }) => {
   const [user, setUser] = useState({ name: '', url: '' });
-  const [bookmarked, setBookmarked] = useState(false);
-  const { state, dispatch } = useContext(SocialContext);
+  const [open, setOpen] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+  const mySelf = JSON.parse(localStorage.getItem('user'));
+  const { state, dispatch, removePost, addToFollow, removeFromFollow } =
+    useContext(SocialContext);
+
   const getUserInfo = async () => {
     try {
       const response = await axios.get(`/api/users`);
       const data = response.data.users.find(
         (user) => user.username === post.username,
       );
-      setUser({ name: `${data.firstName} ${data.lastName}`, url: data.image });
+      setUser({
+        name: `${data.firstName} ${data.lastName}`,
+        url: data.image,
+        userId: data._id,
+      });
     } catch (error) {
       console.log(error);
     }
   };
+
   const likingPost = async () => {
     const encodedToken = localStorage.getItem('tokenuser');
     try {
@@ -36,7 +47,33 @@ export const PostCard = ({ post }) => {
       dispatch({
         type: 'HELPER',
       });
-      console.log(response);
+      dispatch({
+        type: 'UPDATE_POSTS',
+        payload: response.data.posts,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const dislikingPost = async () => {
+    const encodedToken = localStorage.getItem('tokenuser');
+    try {
+      const response = await axios.post(
+        `/api/posts/dislike/${post._id}`,
+        {},
+        {
+          headers: {
+            authorization: encodedToken,
+          },
+        },
+      );
+      dispatch({
+        type: 'HELPER',
+      });
+      dispatch({
+        type: 'UPDATE_POSTS',
+        payload: response.data.posts,
+      });
     } catch (error) {
       console.log(error);
     }
@@ -91,18 +128,29 @@ export const PostCard = ({ post }) => {
       console.log(error);
     }
   };
+  // console.log(state.likedPosts);
 
-  const checkedAsBookmark = state.bookmarkPosts.reduce((acc, curr) => {
-    if (curr.id === post._id) {
-      return true;
-    }
-    return acc;
-  }, false);
+  const checkedAsBookmark = () =>
+    state.bookmarkPosts.reduce((acc, curr) => {
+      if (curr._id === post._id) {
+        return true;
+      }
+      return acc;
+    }, false);
 
-  console.log(checkedAsBookmark);
+  const checkedAsLiked = () =>
+    post?.likes?.likedBy?.reduce((acc, curr) => {
+      if (curr._id === mySelf._id) {
+        return true;
+      }
+      return acc;
+    }, false);
+
+  const toggleEdit = () => setShowEdit(!showEdit);
+
   useEffect(() => {
     getUserInfo();
-  }, []);
+  }, [state.helper]);
   return (
     <div
       style={{
@@ -114,6 +162,7 @@ export const PostCard = ({ post }) => {
         boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)',
         padding: '20px',
         borderRadius: '10px',
+        position: 'relative',
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -158,26 +207,33 @@ export const PostCard = ({ post }) => {
             </div>
           </div>
         </Link>
-        <div style={{ cursor: 'pointer' }}>...</div>
-      </div>
-      <div
-        style={{
-          fontSize: '16px',
-          width: '80%',
-          textAlign: 'left',
-          padding: '10px',
-          height: '100%',
-          border: 'none',
-          marginBottom: '20px',
-          marginLeft: '50px',
-        }}
-        dangerouslySetInnerHTML={{ __html: post.content }}
-      ></div>
-      {post.mediaURL.length > 0 && (
-        <div>
-          <img src={post.mediaURL} style={{ height: '100%', width: '100%' }} />
+        <div style={{ cursor: 'pointer' }} onClick={() => setOpen(!open)}>
+          ...
         </div>
-      )}
+      </div>
+      <Link style={{ textDecoration: 'none', color: 'white' }}>
+        <div
+          style={{
+            fontSize: '16px',
+            width: '80%',
+            textAlign: 'left',
+            padding: '10px',
+            height: '100%',
+            border: 'none',
+            marginBottom: '20px',
+            marginLeft: '50px',
+          }}
+          dangerouslySetInnerHTML={{ __html: post.content }}
+        ></div>
+        {post.mediaURL?.length > 0 && (
+          <div>
+            <img
+              src={post.mediaURL}
+              style={{ height: '100%', width: '100%' }}
+            />
+          </div>
+        )}
+      </Link>
       <div style={{ borderTop: '1px solid #535353' }}></div>
       <div
         style={{
@@ -190,13 +246,13 @@ export const PostCard = ({ post }) => {
         <div style={{ display: 'flex' }}>
           <Icon
             icon="mdi:heart"
-            color="gray"
+            color={checkedAsLiked() ? 'red' : 'gray'}
             width="25"
             height="25"
             style={{ cursor: 'pointer' }}
-            onClick={likingPost}
+            onClick={() => (checkedAsLiked() ? dislikingPost() : likingPost())}
           />
-          {post.likes.likeCount > 0 && (
+          {post?.likes?.likeCount > 0 && (
             <div style={{ fontSize: '16px', marginLeft: '10px' }}>
               {post.likes.likeCount}
             </div>
@@ -205,12 +261,12 @@ export const PostCard = ({ post }) => {
         <div>
           <Icon
             icon="mdi:bookmark"
-            color={checkedAsBookmark ? 'blue' : 'gray'}
+            color={checkedAsBookmark() ? 'blue' : 'gray'}
             width="25"
             height="25"
             style={{ cursor: 'pointer' }}
             onClick={() =>
-              checkedAsBookmark ? removeFromBookmark() : addToBookmark()
+              checkedAsBookmark() ? removeFromBookmark() : addToBookmark()
             }
           />
         </div>
@@ -238,6 +294,85 @@ export const PostCard = ({ post }) => {
           />
         </div>
       </div>
+      {open && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '60px',
+            right: '10px',
+            boxShadow: '0 0 10px rgba(3, 3, 3, 0.5)',
+            fontSize: '16px',
+            padding: '3px',
+            backgroundColor: 'rgb(41 49 76)',
+            border: '1px solid gray',
+            borderRadius: '5px',
+          }}
+        >
+          {post?.username === state.mySelf.username ? (
+            <div>
+              <div
+                style={{ padding: '10px', cursor: 'pointer' }}
+                className="select-button"
+                onClick={() => {
+                  toggleEdit();
+                  setOpen(!open);
+                }}
+              >
+                Edit
+              </div>
+              <div
+                style={{ padding: '10px', cursor: 'pointer' }}
+                className="select-button"
+                onClick={() => {
+                  removePost(post._id);
+                  setOpen(!open);
+                }}
+              >
+                Delete
+              </div>
+            </div>
+          ) : state.mySelf.following.reduce(
+              (acc, curr) => (curr.username === post.username ? true : acc),
+              false,
+            ) ? (
+            <div>
+              <div
+                style={{ padding: '10px', cursor: 'pointer' }}
+                className="select-button"
+                onClick={() => {
+                  removeFromFollow(user.userId);
+                  setOpen(!open);
+                }}
+              >
+                Unfollow
+              </div>
+            </div>
+          ) : (
+            <div
+              style={{ padding: '10px', cursor: 'pointer' }}
+              className="select-button"
+              onClick={() => {
+                addToFollow(user.userId);
+                setOpen(!open);
+              }}
+            >
+              Follow
+            </div>
+          )}
+        </div>
+      )}
+      {showEdit && (
+        <div>
+          <Popup
+            content={
+              <div>
+                <UpdatePost post={post} editClose={toggleEdit} />
+              </div>
+            }
+            handleClose={toggleEdit}
+          />
+        </div>
+      )}
     </div>
   );
 };

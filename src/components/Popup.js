@@ -10,6 +10,7 @@ export const Popup = (props) => {
         height: '100vh',
         top: 0,
         left: 0,
+        zIndex: 1,
       }}
     >
       <div
@@ -20,10 +21,9 @@ export const Popup = (props) => {
           height: 'auto',
           maxHeight: '70vh',
           marginTop: 'calc(100vh - 85vh - 20px)',
-          background: '#fff',
+          background: 'rgb(29 36 56 / 86%)',
           borderRadius: '4px',
           padding: '60px',
-          border: '1px solid #999',
         }}
       >
         <span

@@ -1,11 +1,13 @@
 import { Icon } from '@iconify/react';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { SuggestionCard } from './SuggestionCard';
+import { SocialContext } from '../context/SocialContext';
 
 export const Hero = ({ children }) => {
-  const [users, setUsers] = useState([]);
+  const { state, dispatch } = useContext(SocialContext);
+  const mySelf = JSON.parse(localStorage.getItem('user'));
   const getUsers = async () => {
     const encodedToken = localStorage.getItem('tokenuser');
 
@@ -15,9 +17,18 @@ export const Hero = ({ children }) => {
           authorization: encodedToken,
         },
       });
+      console.log(response.data.users);
+      dispatch({
+        type: 'UPDATE_SUGGESTIONS',
+        payload: response.data.users.filter((user) => user._id !== mySelf._id),
+      });
 
-      // console.log(response.data.users);
-      setUsers(response.data.users);
+      // setUsers(response.data.users.reduce((acc,curr) =>{
+      //    if(user._id === mySelf._id){
+      //     return acc;
+      //    }
+      //    if()
+      //   },[]));
     } catch (error) {
       console.log(error);
     }
@@ -149,7 +160,7 @@ export const Hero = ({ children }) => {
         <p style={{ fontSize: '18px', fontWeight: 'bold' }}>
           Suggestions for You
         </p>
-        {users.map((user) => (
+        {state.allSuggestions.map((user) => (
           <div>
             <SuggestionCard user={user} />
           </div>

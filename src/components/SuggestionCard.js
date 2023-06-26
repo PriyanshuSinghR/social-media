@@ -1,6 +1,10 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useContext } from 'react';
+import { SocialContext } from '../context/SocialContext';
 
 export const SuggestionCard = ({ user }) => {
+  const { state, dispatch, addToFollow } = useContext(SocialContext);
+
   return (
     <div
       style={{
@@ -44,6 +48,7 @@ export const SuggestionCard = ({ user }) => {
             fontWeight: 'bold',
           }}
           className="button-shadow"
+          onClick={() => addToFollow(user._id)}
         >
           + Follow
         </p>

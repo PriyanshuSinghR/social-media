@@ -14,16 +14,27 @@ const reduceSocial = (state, action) => {
         ...state,
         searchInput: action.payload,
       };
-    case 'UPDATE_PRODUCTS':
+    case 'UPDATE_POSTS':
       return {
         ...state,
-        filteredProducts: action.payload,
+        allPosts: action.payload,
       };
     case 'UPDATE_BOOKMARK':
       return {
         ...state,
         bookmarkPosts: action.payload,
       };
+    case 'UPDATE_MYSELF':
+      return {
+        ...state,
+        mySelf: action.payload,
+      };
+    case 'UPDATE_SUGGESTIONS':
+      return {
+        ...state,
+        allSuggestions: action.payload,
+      };
+
     case 'HELPER':
       return {
         ...state,
@@ -38,19 +49,25 @@ const reduceSocial = (state, action) => {
 export function SocialProvider({ children }) {
   const history = useNavigate();
   const [state, dispatch] = useReducer(reduceSocial, {
-    allProducts: [],
+    allPosts: [],
     searchInput: '',
     isLoggedIn: false,
     bookmarkPosts: [],
     helper: false,
+    mySelf: {},
+    allSuggestions: [],
   });
 
-  const getToCart = async () => {
-    // const encodedToken = localStorage.getItem('tokenuser');
+  const getUser = async () => {
+    const user = JSON.parse(localStorage.getItem('user'));
 
     try {
-      const response = await axios.get(`/api/users`);
-      console.log(response.data);
+      const response = await axios.get(`/api/users/${user._id}`);
+      dispatch({
+        type: 'UPDATE_MYSELF',
+        payload: response.data.user,
+      });
+      console.log(response.data.user);
     } catch (error) {
       console.log(error);
     }
@@ -69,6 +86,82 @@ export function SocialProvider({ children }) {
         type: 'UPDATE_BOOKMARK',
         payload: response.data.bookmarks,
       });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const removePost = async (id) => {
+    const encodedToken = localStorage.getItem('tokenuser');
+    try {
+      const response = await axios.delete(`/api/posts/${id}`, {
+        headers: {
+          authorization: encodedToken,
+        },
+      });
+      dispatch({
+        type: 'UPDATE_POSTS',
+        payload: response.data.posts,
+      });
+      dispatch({
+        type: 'HELPER',
+      });
+
+      console.log(response.data.posts);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const addToFollow = async (id) => {
+    const encodedToken = localStorage.getItem('tokenuser');
+    try {
+      const response = await axios.post(
+        `/api/users/follow/${id}`,
+        {},
+        {
+          headers: {
+            authorization: encodedToken,
+          },
+        },
+      );
+      dispatch({
+        type: 'HELPER',
+      });
+      dispatch({
+        type: 'UPDATE_SUGGESTIONS',
+        payload: state.allSuggestions.filter(
+          (u) => u._id !== response.data.followUser._id,
+        ),
+      });
+      console.log(response.data.followUser);
+      // toast.success('Added to Wishlist');
+      // console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const removeFromFollow = async (id) => {
+    const encodedToken = localStorage.getItem('tokenuser');
+    try {
+      const response = await axios.post(
+        `/api/users/unfollow/${id}`,
+        {},
+        {
+          headers: {
+            authorization: encodedToken,
+          },
+        },
+      );
+      dispatch({
+        type: 'HELPER',
+      });
+      dispatch({
+        type: 'UPDATE_SUGGESTIONS',
+        payload: [...state.allSuggestions, response.data.followUser],
+      });
+      // toast.success('Added to Wishlist');
+      // console.log(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -125,13 +218,16 @@ export function SocialProvider({ children }) {
   // };
 
   useEffect(() => {
-    getToCart();
+    getUser();
   }, [state.helper]);
   return (
     <SocialContext.Provider
       value={{
         state,
         dispatch,
+        removePost,
+        addToFollow,
+        removeFromFollow,
       }}
     >
       {children}
