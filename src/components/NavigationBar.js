@@ -25,22 +25,22 @@ const NavigationBar = () => {
     history('/signin');
   };
 
-  useEffect(() => {
-    if (state.searchInput.length > 0) {
-      dispatch({
-        type: 'UPDATE_PRODUCTS',
-        payload: [...state.allProducts].filter((item) =>
-          item.name.toLowerCase().includes(state.searchInput.toLowerCase()),
-        ),
-      });
-      history('./');
-    } else {
-      dispatch({
-        type: 'UPDATE_PRODUCTS',
-        payload: [...state.allProducts],
-      });
-    }
-  }, [state.searchInput]);
+  // useEffect(() => {
+  //   if (state.searchInput.length > 0) {
+  //     dispatch({
+  //       type: 'UPDATE_PRODUCTS',
+  //       payload: [...state.allProducts].filter((item) =>
+  //         item.name.toLowerCase().includes(state.searchInput.toLowerCase()),
+  //       ),
+  //     });
+  //     history('./');
+  //   } else {
+  //     dispatch({
+  //       type: 'UPDATE_PRODUCTS',
+  //       payload: [...state.allProducts],
+  //     });
+  //   }
+  // }, [state.searchInput]);
 
   return (
     <div
@@ -125,10 +125,12 @@ const NavigationBar = () => {
             className="nav-down"
           >
             <Link
+              to={`/profile/${user._id}`}
               style={{
                 textDecoration: 'none',
                 color: '#4361EE',
               }}
+              onClick={togglePopup}
             >
               Profile
             </Link>

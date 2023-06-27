@@ -23,7 +23,8 @@ export const Popup = (props) => {
           marginTop: 'calc(100vh - 85vh - 20px)',
           background: 'rgb(29 36 56 / 86%)',
           borderRadius: '4px',
-          padding: '60px',
+          padding: '30px',
+          overflowX: 'hidden',
         }}
       >
         <span
@@ -40,9 +41,10 @@ export const Popup = (props) => {
             borderRadius: '50%',
             lineHeight: '20px',
             textAlign: 'center',
-            border: '1px solid #999',
+
             fontSize: '20px',
           }}
+          className="button-shadow"
         >
           x
         </span>

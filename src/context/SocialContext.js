@@ -72,6 +72,30 @@ export function SocialProvider({ children }) {
       console.log(error);
     }
   };
+
+  const getSuggestions = async () => {
+    const mySelf = JSON.parse(localStorage.getItem('user'));
+
+    try {
+      const response = await axios.get(`/api/users`);
+      console.log(response.data.users);
+
+      dispatch({
+        type: 'UPDATE_SUGGESTIONS',
+        payload: response.data.users.filter((user) => user._id !== mySelf._id),
+      });
+
+      // setUsers(response.data.users.reduce((acc,curr) =>{
+      //    if(user._id === mySelf._id){
+      //     return acc;
+      //    }
+      //    if()
+      //   },[]));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const getToBookmark = async () => {
     const encodedToken = localStorage.getItem('tokenuser');
 
@@ -216,6 +240,10 @@ export function SocialProvider({ children }) {
   //     }, 2000);
   //   }
   // };
+
+  useEffect(() => {
+    getSuggestions();
+  }, []);
 
   useEffect(() => {
     getUser();

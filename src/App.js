@@ -14,6 +14,8 @@ import { SocialContext } from './context/SocialContext';
 import { Explore } from './pages/Explore';
 import { Bookmark } from './pages/Bookmark';
 import { Liked } from './pages/Liked';
+import { Profile } from './pages/Profile';
+import { PostDetail } from './pages/PostDetail';
 
 function App() {
   const { state, dispatch } = useContext(SocialContext);
@@ -53,6 +55,8 @@ function App() {
           <Route path="/explore" element={<Explore />} />
           <Route path="/bookmark" element={<Bookmark />} />
           <Route path="/liked" element={<Liked />} />
+          <Route path="/profile/:profileId" element={<Profile />} />
+          <Route path="/post/:postId" element={<PostDetail />} />
         </Routes>
       </header>
     </div>

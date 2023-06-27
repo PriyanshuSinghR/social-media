@@ -6,33 +6,7 @@ import { SuggestionCard } from './SuggestionCard';
 import { SocialContext } from '../context/SocialContext';
 
 export const Hero = ({ children }) => {
-  const { state, dispatch } = useContext(SocialContext);
-  const mySelf = JSON.parse(localStorage.getItem('user'));
-  const getUsers = async () => {
-    const encodedToken = localStorage.getItem('tokenuser');
-
-    try {
-      const response = await axios.get(`/api/users`, {
-        headers: {
-          authorization: encodedToken,
-        },
-      });
-      console.log(response.data.users);
-      dispatch({
-        type: 'UPDATE_SUGGESTIONS',
-        payload: response.data.users.filter((user) => user._id !== mySelf._id),
-      });
-
-      // setUsers(response.data.users.reduce((acc,curr) =>{
-      //    if(user._id === mySelf._id){
-      //     return acc;
-      //    }
-      //    if()
-      //   },[]));
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const { state } = useContext(SocialContext);
 
   const getActiveStyle = ({ isActive }) => ({
     color: 'white',
@@ -43,23 +17,25 @@ export const Hero = ({ children }) => {
     color: isActive ? 'red' : 'white',
   });
 
-  useEffect(() => {
-    getUsers();
-  }, []);
   return (
     <div
       style={{
         display: 'grid',
         gridTemplateColumns: '1fr 3fr 1fr',
-        height: '100%',
+
+        height: '100vh',
+        position: 'fixed',
+        // top: '100px',
+        bottom: '0',
+        // paddingTop: '300px',
       }}
     >
       <div
         style={{
-          height: '100vh',
           margin: '0',
-          marginTop: '100px',
+          // marginTop: '100px',
           width: '100%',
+          paddingTop: '100px',
         }}
       >
         <nav
@@ -69,7 +45,7 @@ export const Hero = ({ children }) => {
             textAlign: 'left',
             margin: '0',
             justifyContent: 'space-between',
-            height: '200px',
+            // height: '200px',
             alignItems: 'left',
           }}
         >
@@ -141,10 +117,11 @@ export const Hero = ({ children }) => {
           borderRight: '1px solid #535353',
           borderLeft: '1px solid #535353',
           overflowX: 'hidden',
-          height: '100vh',
-          marginTop: '100px',
 
+          // marginTop: '100px',
+          // height: '100%',
           width: '100%',
+          paddingTop: '100px',
         }}
       >
         {children}
@@ -153,8 +130,9 @@ export const Hero = ({ children }) => {
         style={{
           textAlign: 'left',
           marginLeft: '10px',
-          marginTop: '100px',
+          // marginTop: '100px',
           width: '100%',
+          paddingTop: '100px',
         }}
       >
         <p style={{ fontSize: '18px', fontWeight: 'bold' }}>

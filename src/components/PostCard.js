@@ -9,7 +9,7 @@ import { Popup } from './Popup';
 import { UpdatePost } from './UpdatePost';
 
 export const PostCard = ({ post }) => {
-  const [user, setUser] = useState({ name: '', url: '' });
+  const [user, setUser] = useState({ name: '', url: '', userId: '' });
   const [open, setOpen] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const mySelf = JSON.parse(localStorage.getItem('user'));
@@ -132,7 +132,7 @@ export const PostCard = ({ post }) => {
 
   const checkedAsBookmark = () =>
     state.bookmarkPosts.reduce((acc, curr) => {
-      if (curr._id === post._id) {
+      if (curr?._id === post?._id) {
         return true;
       }
       return acc;
@@ -140,7 +140,7 @@ export const PostCard = ({ post }) => {
 
   const checkedAsLiked = () =>
     post?.likes?.likedBy?.reduce((acc, curr) => {
-      if (curr._id === mySelf._id) {
+      if (curr?._id === mySelf?._id) {
         return true;
       }
       return acc;
@@ -166,7 +166,10 @@ export const PostCard = ({ post }) => {
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Link style={{ textDecoration: 'none', color: 'white' }}>
+        <Link
+          to={`/profile/${user.userId}`}
+          style={{ textDecoration: 'none', color: 'white' }}
+        >
           <div style={{ display: 'flex' }}>
             <img
               src={user.url}
@@ -211,7 +214,10 @@ export const PostCard = ({ post }) => {
           ...
         </div>
       </div>
-      <Link style={{ textDecoration: 'none', color: 'white' }}>
+      <Link
+        to={`/post/${post._id}`}
+        style={{ textDecoration: 'none', color: 'white' }}
+      >
         <div
           style={{
             fontSize: '16px',

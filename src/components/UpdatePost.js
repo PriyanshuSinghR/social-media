@@ -59,7 +59,7 @@ export const UpdatePost = ({ post, editClose }) => {
       style={{
         display: 'flex',
         margin: 'auto',
-        width: '100%',
+        width: '90%',
         paddingBottom: '20px',
         boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)',
         padding: '20px',
