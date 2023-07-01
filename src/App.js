@@ -33,7 +33,7 @@ function App() {
         pauseOnHover={false}
         theme="dark"
       />
-      {state.isLoggedIn && (
+      {/* {state.isLoggedIn && (
         <div
           style={{
             backgroundColor: 'black',
@@ -45,7 +45,18 @@ function App() {
         >
           <NavigationBar />
         </div>
-      )}
+      )} */}
+      <div
+        style={{
+          backgroundColor: 'black',
+          position: 'fixed',
+          width: '100%',
+          zIndex: 1,
+          boxShadow: '0 7px 30px 0 black',
+        }}
+      >
+        <NavigationBar />
+      </div>
       <header className="App-header">
         {/* <Loader /> */}
         <Routes>

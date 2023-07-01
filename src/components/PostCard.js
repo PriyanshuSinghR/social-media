@@ -1,17 +1,22 @@
 import { Icon } from '@iconify/react';
 import axios from 'axios';
 import moment from 'moment';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { SocialContext } from '../context/SocialContext';
 import { Popup } from './Popup';
 import { UpdatePost } from './UpdatePost';
+import { useClickOutside } from '../customHooks/useClickOutside';
+import { textChanger } from '../utils';
 
 export const PostCard = ({ post }) => {
   const [user, setUser] = useState({ name: '', url: '', userId: '' });
   const [open, setOpen] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
+  const [showComment, setShowComment] = useState(false);
+  const [comment, setComment] = useState('');
+  const modalRef = useRef();
   const mySelf = JSON.parse(localStorage.getItem('user'));
   const { state, dispatch, removePost, addToFollow, removeFromFollow } =
     useContext(SocialContext);
@@ -128,10 +133,31 @@ export const PostCard = ({ post }) => {
       console.log(error);
     }
   };
-  // console.log(state.likedPosts);
+
+  const commentPost = () => {
+    const uPost = {
+      ...post,
+      comments: [
+        ...post?.comments,
+        {
+          _id: '',
+          comment: comment,
+          firstName: state.mySelf.firstName,
+          lastName: state.mySelf.lastName,
+          username: state.mySelf.username,
+          image: state.mySelf.image,
+        },
+      ],
+    };
+    dispatch({
+      type: 'UPDATE_POSTS',
+      payload: state.allPosts.map((p) => (p._id === post._id ? uPost : p)),
+    });
+    setShowComment(false);
+  };
 
   const checkedAsBookmark = () =>
-    state.bookmarkPosts.reduce((acc, curr) => {
+    state?.bookmarkPosts?.reduce((acc, curr) => {
       if (curr?._id === post?._id) {
         return true;
       }
@@ -148,16 +174,20 @@ export const PostCard = ({ post }) => {
 
   const toggleEdit = () => setShowEdit(!showEdit);
 
+  useClickOutside(modalRef, () => setOpen(false));
+
+  const textHtlm = textChanger(post?.content);
+
   useEffect(() => {
     getUserInfo();
-  }, [state.helper]);
+  }, [post]);
   return (
     <div
       style={{
         display: 'flex',
         flexDirection: 'column',
         margin: '40px auto',
-        width: '70%',
+        width: '60%',
         paddingBottom: '20px',
         boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)',
         padding: '20px',
@@ -229,7 +259,7 @@ export const PostCard = ({ post }) => {
             marginBottom: '20px',
             marginLeft: '50px',
           }}
-          dangerouslySetInnerHTML={{ __html: post.content }}
+          dangerouslySetInnerHTML={{ __html: textHtlm }}
         ></div>
         {post.mediaURL?.length > 0 && (
           <div>
@@ -283,6 +313,7 @@ export const PostCard = ({ post }) => {
             width="25"
             height="25"
             style={{ cursor: 'pointer' }}
+            onClick={() => setShowComment(!showComment)}
           />
           {post?.comments?.length > 0 && (
             <div style={{ fontSize: '16px', marginLeft: '10px' }}>
@@ -313,6 +344,7 @@ export const PostCard = ({ post }) => {
             border: '1px solid gray',
             borderRadius: '5px',
           }}
+          ref={modalRef}
         >
           {post?.username === state.mySelf.username ? (
             <div>
@@ -376,6 +408,60 @@ export const PostCard = ({ post }) => {
               </div>
             }
             handleClose={toggleEdit}
+          />
+        </div>
+      )}
+      {showComment && (
+        <div>
+          <Popup
+            content={
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex' }}>
+                  <img
+                    src={state.mySelf.image}
+                    style={{
+                      width: '50px',
+                      height: '50px',
+                      borderRadius: '50% 50%',
+                      marginRight: '10px',
+                    }}
+                  />
+                  <input
+                    value={comment}
+                    type="text"
+                    placeholder="Comment on that Post"
+                    onChange={(event) => setComment(event.target.value)}
+                    style={{
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      width: '85%',
+                      color: 'white',
+                      fontSize: '16px',
+                    }}
+                  />
+                </div>
+                <div
+                  onClick={commentPost}
+                  className="button-shadow"
+                  style={{
+                    border: 'none',
+                    margin: '20px auto',
+                    cursor: 'pointer',
+                    padding: '7px 0px',
+                    borderRadius: '15px',
+                    backgroundColor: 'red',
+                    fontSize: '14px',
+                    width: '80px',
+                    textAlign: 'center',
+                    color: 'white',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  Send
+                </div>
+              </div>
+            }
+            handleClose={() => setShowComment(!showComment)}
           />
         </div>
       )}

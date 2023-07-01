@@ -119,8 +119,30 @@ export const posts = [
     comments: [
       {
         _id: 'okzxcf',
-        username: 'janedoe',
-        text: 'I agree!! Feels like we should go for outing. What say?',
+        comment: 'I agree!! Feels like we should go for outing. What say?',
+        firstName: 'Priyanshu',
+        lastName: 'Singh',
+        username: 'priyanshu_singh',
+        image:
+          'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWFufGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60',
+        createdAt: formatDate(),
+        updatedAt: formatDate(),
+        votes: {
+          upvotedBy: [],
+          downvotedBy: [],
+        },
+      },
+      {
+        _id: 'drdrdrdrdr',
+        comment: 'Nice!',
+        firstName: 'Jatin',
+        lastName: 'Agarwal',
+        username: 'jatin_smart',
+
+        image:
+          'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80',
+        createdAt: formatDate(),
+        updatedAt: formatDate(),
         votes: {
           upvotedBy: [],
           downvotedBy: [],

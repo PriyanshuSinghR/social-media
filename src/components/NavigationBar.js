@@ -3,12 +3,15 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import { SocialContext } from '../context/SocialContext';
 import { toast } from 'react-toastify';
+import axios from 'axios';
+import { getSearchedUser } from '../utils';
 
 const NavigationBar = () => {
   const { state, dispatch } = useContext(SocialContext);
   const history = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
   const [isOpen, setIsOpen] = useState(false);
+
   const togglePopup = () => {
     setIsOpen(!isOpen);
   };
@@ -24,6 +27,22 @@ const NavigationBar = () => {
 
     history('/signin');
   };
+
+  const allUsers = async () => {
+    try {
+      const response = await axios.get(`/api/users`);
+      console.log(response.data.users);
+
+      dispatch({
+        type: 'UPDATE_USERS',
+        payload: response.data.users,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const search = getSearchedUser(state.allUsers, state.searchInput);
 
   // useEffect(() => {
   //   if (state.searchInput.length > 0) {
@@ -42,6 +61,10 @@ const NavigationBar = () => {
   //   }
   // }, [state.searchInput]);
 
+  useEffect(() => {
+    allUsers();
+  }, []);
+
   return (
     <div
       style={{
@@ -49,6 +72,7 @@ const NavigationBar = () => {
         justifyContent: 'space-between',
         margin: 'auto',
         padding: '0px 20px',
+        position: 'relative',
       }}
     >
       <Link to="/" style={{ textDecoration: 'none' }}>
@@ -142,6 +166,59 @@ const NavigationBar = () => {
           >
             Logout
           </p>
+        </div>
+      )}
+      {state?.searchInput?.length > 0 && (
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            position: 'absolute',
+            top: '80px',
+            left: '40%',
+            backgroundColor: 'gray',
+            padding: '3px',
+            border: '1px solid gray',
+            borderRadius: '10px',
+          }}
+        >
+          {search?.map((e) => (
+            <Link
+              to={`/profile/${e._id}`}
+              style={{
+                display: 'flex',
+                cursor: 'pointer',
+                padding: '5px 10px',
+                textDecoration: 'none',
+                color: 'white',
+              }}
+              className="select-button"
+              onClick={() => {
+                dispatch({ type: 'SEARCH_PRODUCTS', payload: '' });
+                dispatch({ type: 'HELPER' });
+              }}
+            >
+              <div>
+                <img
+                  src={e?.image}
+                  style={{
+                    height: '35px',
+                    width: '35px',
+                    borderRadius: '50% 50%',
+                    padding: '10px 0px',
+                  }}
+                ></img>
+              </div>
+              <div style={{ margin: '10px', width: '150px' }}>
+                <p
+                  style={{ fontSize: '16px', margin: '0px' }}
+                >{`${e?.firstName} ${e?.lastName}`}</p>
+                <p style={{ fontSize: '14px', margin: '0px' }}>
+                  @{e?.username}
+                </p>
+              </div>
+            </Link>
+          ))}
         </div>
       )}
     </div>

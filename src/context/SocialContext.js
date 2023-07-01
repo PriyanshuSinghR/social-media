@@ -34,6 +34,16 @@ const reduceSocial = (state, action) => {
         ...state,
         allSuggestions: action.payload,
       };
+    case 'SORT':
+      return {
+        ...state,
+        sort: action.payload,
+      };
+    case 'UPDATE_USERS':
+      return {
+        ...state,
+        allUsers: action.payload,
+      };
 
     case 'HELPER':
       return {
@@ -55,7 +65,9 @@ export function SocialProvider({ children }) {
     bookmarkPosts: [],
     helper: false,
     mySelf: {},
+    allUsers: [],
     allSuggestions: [],
+    sort: 'LATEST',
   });
 
   const getUser = async () => {
@@ -191,6 +203,20 @@ export function SocialProvider({ children }) {
     }
   };
 
+  const getPosts = async () => {
+    try {
+      const response = await axios.get(`/api/posts`);
+      dispatch({
+        type: 'UPDATE_POSTS',
+        payload: response.data.posts,
+      });
+
+      console.log(response.data.posts);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const addToCart = async (product) => {
     const encodedToken = localStorage.getItem('tokenuser');
 
@@ -210,36 +236,6 @@ export function SocialProvider({ children }) {
       console.log(error);
     }
   };
-  // const addToFav = async (product) => {
-  //   const encodedToken = localStorage.getItem('tokenuser');
-  //   try {
-  //     const response = await axios.post(
-  //       `/api/user/wishlist`,
-  //       { product },
-  //       {
-  //         headers: {
-  //           authorization: encodedToken,
-  //         },
-  //       },
-  //     );
-  //     dispatch({
-  //       type: 'UPDATE_FAV',
-  //       payload: response.data.wishlist,
-  //     });
-  //     dispatch({
-  //       type: 'LOGIN_STATUS',
-  //       payload: true,
-  //     });
-  //     toast.success('Added to Wishlist');
-  //     console.log(response.data.wishlist);
-  //   } catch (error) {
-  //     console.log(error);
-  //     toast.warning('Please First Sign In');
-  //     setTimeout(() => {
-  //       history('/signin');
-  //     }, 2000);
-  //   }
-  // };
 
   useEffect(() => {
     getSuggestions();
@@ -247,6 +243,7 @@ export function SocialProvider({ children }) {
 
   useEffect(() => {
     getUser();
+    getPosts();
   }, [state.helper]);
   return (
     <SocialContext.Provider

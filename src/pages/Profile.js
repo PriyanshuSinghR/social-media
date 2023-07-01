@@ -395,7 +395,7 @@ export const Profile = () => {
                 fontSize: '14px',
                 margin: '0px',
                 textDecoration: 'none',
-                color: 'white',
+                color: 'red',
               }}
             >
               {user?.website}

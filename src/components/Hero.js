@@ -4,9 +4,14 @@ import React, { useContext, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { SuggestionCard } from './SuggestionCard';
 import { SocialContext } from '../context/SocialContext';
+import { Popup } from './Popup';
+import { NewPost } from './NewPost';
 
 export const Hero = ({ children }) => {
   const { state } = useContext(SocialContext);
+  const [open, setOpen] = useState(false);
+
+  const togglePost = () => setOpen(!open);
 
   const getActiveStyle = ({ isActive }) => ({
     color: 'white',
@@ -107,10 +112,21 @@ export const Hero = ({ children }) => {
               fontWeight: 'bold',
             }}
             className="button-shadow"
+            onClick={togglePost}
           >
             Post
           </button>
         </nav>
+        {open && (
+          <div>
+            <Popup
+              content=<div>
+                <NewPost handleToggle={togglePost} />
+              </div>
+              handleClose={togglePost}
+            />
+          </div>
+        )}
       </div>
       <div
         style={{
