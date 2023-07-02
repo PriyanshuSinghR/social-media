@@ -9,7 +9,7 @@ import { useClickOutside } from '../customHooks/useClickOutside';
 export const Home = () => {
   const { state, dispatch } = useContext(SocialContext);
   const [showSortModal, setShowSortModal] = useState(false);
-
+  console.log(state.allPosts);
   const modalRef = useRef();
 
   useClickOutside(modalRef, setShowSortModal);

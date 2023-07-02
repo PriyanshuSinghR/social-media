@@ -207,6 +207,8 @@ export function SocialProvider({ children }) {
 
   useEffect(() => {
     getSuggestions();
+    getPosts();
+    getUser();
   }, []);
 
   useEffect(() => {

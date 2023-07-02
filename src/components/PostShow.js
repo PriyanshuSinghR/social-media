@@ -18,6 +18,7 @@ export const PostShow = () => {
 
   const timelinePosts = [...postOfFollowingUsers, ...postsOfUser];
   const sortedPost = getSortedProducts(timelinePosts, state.sort);
+  console.log(state.mySelf);
   return (
     <div>
       {sortedPost?.map((post) => (
