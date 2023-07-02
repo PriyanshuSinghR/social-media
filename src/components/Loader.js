@@ -7,7 +7,7 @@ export const Loader = () => {
       src={logo1}
       className="App-logo"
       alt="logo"
-      style={{ width: '100px', height: '100px' }}
+      style={{ width: '200px', height: '200px' }}
     />
   );
 };

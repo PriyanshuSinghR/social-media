@@ -1,9 +1,9 @@
-import axios from 'axios';
 import React, { useContext } from 'react';
 import { SocialContext } from '../context/SocialContext';
+import { Link } from 'react-router-dom';
 
 export const SuggestionCard = ({ user }) => {
-  const { state, dispatch, addToFollow } = useContext(SocialContext);
+  const { addToFollow } = useContext(SocialContext);
 
   return (
     <div
@@ -14,10 +14,13 @@ export const SuggestionCard = ({ user }) => {
         marginRight: '20px',
       }}
     >
-      <div style={{ display: 'flex' }}>
+      <Link
+        to={`/profile/${user?._id}`}
+        style={{ display: 'flex', color: 'white', textDecoration: 'none' }}
+      >
         <div>
           <img
-            src={user.image}
+            src={user?.image}
             style={{
               height: '35px',
               width: '35px',
@@ -29,10 +32,10 @@ export const SuggestionCard = ({ user }) => {
         <div style={{ margin: '10px', width: '150px' }}>
           <p
             style={{ fontSize: '16px', margin: '0px' }}
-          >{`${user.firstName} ${user.lastName}`}</p>
-          <p style={{ fontSize: '14px', margin: '0px' }}>@{user.username}</p>
+          >{`${user?.firstName} ${user?.lastName}`}</p>
+          <p style={{ fontSize: '14px', margin: '0px' }}>@{user?.username}</p>
         </div>
-      </div>
+      </Link>
       <div>
         <p
           style={{
@@ -48,7 +51,7 @@ export const SuggestionCard = ({ user }) => {
             fontWeight: 'bold',
           }}
           className="button-shadow"
-          onClick={() => addToFollow(user._id)}
+          onClick={() => addToFollow(user?._id)}
         >
           + Follow
         </p>

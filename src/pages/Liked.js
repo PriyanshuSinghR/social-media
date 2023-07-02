@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Hero } from '../components/Hero';
 import { PostCard } from '../components/PostCard';
 import { SocialContext } from '../context/SocialContext';
@@ -15,6 +15,19 @@ export const Liked = () => {
     return acc;
   }, []);
 
+  useEffect(() => {
+    dispatch({
+      type: 'LOADING_STATUS',
+      payload: true,
+    });
+    setTimeout(() => {
+      dispatch({
+        type: 'LOADING_STATUS',
+        payload: false,
+      });
+    }, 500);
+  }, []);
+
   return (
     <Hero>
       <div style={{ textAlign: 'center' }}>
@@ -23,9 +36,9 @@ export const Liked = () => {
         ) : (
           <div>
             <h3>Your Liked</h3>
-            {likedPosts.map((post) => (
+            {likedPosts?.map((post) => (
               <div>
-                <PostCard post={post} />
+                <PostCard id={post?._id} />
               </div>
             ))}
           </div>

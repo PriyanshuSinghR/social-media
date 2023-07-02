@@ -9,10 +9,12 @@ import { Popup } from './Popup';
 import { UpdatePost } from './UpdatePost';
 import { useClickOutside } from '../customHooks/useClickOutside';
 import { textChanger } from '../utils';
+import { toast } from 'react-toastify';
 
-export const PostCard = ({ post }) => {
+export const PostCard = ({ id }) => {
   const [user, setUser] = useState({ name: '', url: '', userId: '' });
   const [open, setOpen] = useState(false);
+  const [post, setPost] = useState({});
   const [showEdit, setShowEdit] = useState(false);
   const [showComment, setShowComment] = useState(false);
   const [comment, setComment] = useState('');
@@ -21,17 +23,23 @@ export const PostCard = ({ post }) => {
   const { state, dispatch, removePost, addToFollow, removeFromFollow } =
     useContext(SocialContext);
 
-  const getUserInfo = async () => {
+  const getPost = async () => {
     try {
-      const response = await axios.get(`/api/users`);
-      const data = response.data.users.find(
-        (user) => user.username === post.username,
-      );
-      setUser({
-        name: `${data.firstName} ${data.lastName}`,
-        url: data.image,
-        userId: data._id,
-      });
+      const response = await axios.get(`/api/posts/${id}`);
+      setPost(response.data.post);
+      try {
+        const res = await axios.get(`/api/users`);
+        const data = res.data.users.find(
+          (user) => user.username === response.data.post.username,
+        );
+        setUser({
+          name: `${data.firstName} ${data.lastName}`,
+          url: data.image,
+          userId: data._id,
+        });
+      } catch (error) {
+        console.log(error);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -41,7 +49,7 @@ export const PostCard = ({ post }) => {
     const encodedToken = localStorage.getItem('tokenuser');
     try {
       const response = await axios.post(
-        `/api/posts/like/${post._id}`,
+        `/api/posts/like/${id}`,
         {},
         {
           headers: {
@@ -56,6 +64,7 @@ export const PostCard = ({ post }) => {
         type: 'UPDATE_POSTS',
         payload: response.data.posts,
       });
+      toast.success('Liked');
     } catch (error) {
       console.log(error);
     }
@@ -64,7 +73,7 @@ export const PostCard = ({ post }) => {
     const encodedToken = localStorage.getItem('tokenuser');
     try {
       const response = await axios.post(
-        `/api/posts/dislike/${post._id}`,
+        `/api/posts/dislike/${id}`,
         {},
         {
           headers: {
@@ -79,6 +88,7 @@ export const PostCard = ({ post }) => {
         type: 'UPDATE_POSTS',
         payload: response.data.posts,
       });
+      toast.success('Disliked');
     } catch (error) {
       console.log(error);
     }
@@ -87,7 +97,7 @@ export const PostCard = ({ post }) => {
     const encodedToken = localStorage.getItem('tokenuser');
     try {
       const response = await axios.post(
-        `/api/users/bookmark/${post._id}`,
+        `/api/users/bookmark/${id}`,
         {},
         {
           headers: {
@@ -103,7 +113,7 @@ export const PostCard = ({ post }) => {
         type: 'UPDATE_BOOKMARK',
         payload: response.data.bookmarks,
       });
-      console.log(response.data.bookmarks);
+      toast.success('Added to Bookmark');
     } catch (error) {
       console.log(error);
     }
@@ -112,7 +122,7 @@ export const PostCard = ({ post }) => {
     const encodedToken = localStorage.getItem('tokenuser');
     try {
       const response = await axios.post(
-        `/api/users/remove-bookmark/${post._id}`,
+        `/api/users/remove-bookmark/${id}`,
         {},
         {
           headers: {
@@ -128,7 +138,7 @@ export const PostCard = ({ post }) => {
         type: 'UPDATE_BOOKMARK',
         payload: response.data.bookmarks,
       });
-      console.log(response.data.bookmarks);
+      toast.success('Removed from Bookmark');
     } catch (error) {
       console.log(error);
     }
@@ -151,7 +161,7 @@ export const PostCard = ({ post }) => {
     };
     dispatch({
       type: 'UPDATE_POSTS',
-      payload: state.allPosts.map((p) => (p._id === post._id ? uPost : p)),
+      payload: state.allPosts.map((p) => (p._id === id ? uPost : p)),
     });
     setShowComment(false);
   };
@@ -179,8 +189,8 @@ export const PostCard = ({ post }) => {
   const textHtlm = textChanger(post?.content);
 
   useEffect(() => {
-    getUserInfo();
-  }, [post]);
+    getPost();
+  }, [id, state.helper]);
   return (
     <div
       style={{
@@ -197,12 +207,12 @@ export const PostCard = ({ post }) => {
     >
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <Link
-          to={`/profile/${user.userId}`}
+          to={`/profile/${user?.userId}`}
           style={{ textDecoration: 'none', color: 'white' }}
         >
           <div style={{ display: 'flex' }}>
             <img
-              src={user.url}
+              src={user?.url}
               style={{
                 height: '50px',
                 width: '50px',
@@ -220,12 +230,12 @@ export const PostCard = ({ post }) => {
                 <p
                   style={{ fontSize: '16px', fontWeight: 'bold', margin: '0' }}
                 >
-                  {user.name}
+                  {user?.name}
                 </p>
                 <p
                   style={{ fontSize: '14px', color: '#e2e2e292', margin: '0' }}
                 >
-                  {moment(post.createdAt).format('DD-MMM-YYYY')}
+                  {moment(post?.createdAt).format('DD-MMM-YYYY')}
                 </p>
               </div>
               <p
@@ -235,7 +245,7 @@ export const PostCard = ({ post }) => {
                   marginTop: '10px',
                 }}
               >
-                @{post.username}
+                @{post?.username}
               </p>
             </div>
           </div>
@@ -245,7 +255,7 @@ export const PostCard = ({ post }) => {
         </div>
       </div>
       <Link
-        to={`/post/${post._id}`}
+        to={`/post/${post?._id}`}
         style={{ textDecoration: 'none', color: 'white' }}
       >
         <div
@@ -261,10 +271,10 @@ export const PostCard = ({ post }) => {
           }}
           dangerouslySetInnerHTML={{ __html: textHtlm }}
         ></div>
-        {post.mediaURL?.length > 0 && (
+        {post?.mediaURL?.length > 0 && (
           <div>
             <img
-              src={post.mediaURL}
+              src={post?.mediaURL}
               style={{ height: '100%', width: '100%' }}
             />
           </div>
@@ -317,7 +327,7 @@ export const PostCard = ({ post }) => {
           />
           {post?.comments?.length > 0 && (
             <div style={{ fontSize: '16px', marginLeft: '10px' }}>
-              {post.comments.length}
+              {post?.comments?.length}
             </div>
           )}
         </div>
@@ -346,7 +356,7 @@ export const PostCard = ({ post }) => {
           }}
           ref={modalRef}
         >
-          {post?.username === state.mySelf.username ? (
+          {post?.username === state?.mySelf?.username ? (
             <div>
               <div
                 style={{ padding: '10px', cursor: 'pointer' }}
@@ -362,15 +372,15 @@ export const PostCard = ({ post }) => {
                 style={{ padding: '10px', cursor: 'pointer' }}
                 className="select-button"
                 onClick={() => {
-                  removePost(post._id);
+                  removePost(post?._id);
                   setOpen(!open);
                 }}
               >
                 Delete
               </div>
             </div>
-          ) : state.mySelf.following.reduce(
-              (acc, curr) => (curr.username === post.username ? true : acc),
+          ) : state?.mySelf?.following?.reduce(
+              (acc, curr) => (curr?.username === post?.username ? true : acc),
               false,
             ) ? (
             <div>
@@ -378,7 +388,7 @@ export const PostCard = ({ post }) => {
                 style={{ padding: '10px', cursor: 'pointer' }}
                 className="select-button"
                 onClick={() => {
-                  removeFromFollow(user.userId);
+                  removeFromFollow(user?.userId);
                   setOpen(!open);
                 }}
               >
@@ -390,7 +400,7 @@ export const PostCard = ({ post }) => {
               style={{ padding: '10px', cursor: 'pointer' }}
               className="select-button"
               onClick={() => {
-                addToFollow(user.userId);
+                addToFollow(user?.userId);
                 setOpen(!open);
               }}
             >
@@ -418,7 +428,7 @@ export const PostCard = ({ post }) => {
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <div style={{ display: 'flex' }}>
                   <img
-                    src={state.mySelf.image}
+                    src={state?.mySelf?.image}
                     style={{
                       width: '50px',
                       height: '50px',

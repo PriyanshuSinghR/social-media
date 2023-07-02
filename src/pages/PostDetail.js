@@ -12,11 +12,18 @@ export const PostDetail = () => {
   const { state, dispatch } = useContext(SocialContext);
 
   const getPost = async () => {
+    dispatch({
+      type: 'LOADING_STATUS',
+      payload: true,
+    });
     try {
       const response = await axios.get(`/api/posts/${postId}`);
       setPost(response.data.post);
 
-      console.log(response.data.post);
+      dispatch({
+        type: 'LOADING_STATUS',
+        payload: false,
+      });
     } catch (error) {
       console.log(error);
     }
@@ -24,11 +31,11 @@ export const PostDetail = () => {
 
   useEffect(() => {
     getPost();
-  }, [state.helper]);
+  }, [state.helper, postId]);
 
   return (
     <Hero>
-      <PostCard post={post} />
+      <PostCard id={postId} />
 
       {post?.comments?.length === 0 ? (
         <h3 style={{ margin: '40px auto', width: '60%' }}>No comments</h3>

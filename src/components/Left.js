@@ -1,11 +1,10 @@
 import React, { useContext, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { SocialContext } from '../context/SocialContext';
 import { toast } from 'react-toastify';
 
 export const Left = ({ login }) => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [user, setUser] = useState({
     firstName: '',
     lastName: '',
@@ -13,7 +12,7 @@ export const Left = ({ login }) => {
     password: '',
   });
 
-  const { state, dispatch } = useContext(SocialContext);
+  const { dispatch } = useContext(SocialContext);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   let name, value;

@@ -1,13 +1,13 @@
 import { Icon } from '@iconify/react';
 import axios from 'axios';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { SocialContext } from '../context/SocialContext';
 import { emojis } from '../utils';
 
 export const UpdatePost = ({ post, editClose }) => {
   const user = JSON.parse(localStorage.getItem('user'));
-  const { state, dispatch } = useContext(SocialContext);
+  const { dispatch } = useContext(SocialContext);
 
   const [upload, setUpload] = useState({
     content: post.content,
@@ -15,11 +15,11 @@ export const UpdatePost = ({ post, editClose }) => {
   });
 
   const [emojiOpen, setEmojiOpen] = useState(false);
-  const newPostRef = useRef();
+
   console.log(upload);
   const hiddenFileInput = useRef(null);
 
-  const handleClick = (event) => {
+  const handleClick = () => {
     hiddenFileInput.current.click();
   };
   const handleChange = (event) => {
@@ -31,7 +31,7 @@ export const UpdatePost = ({ post, editClose }) => {
     const encodedToken = localStorage.getItem('tokenuser');
 
     try {
-      const response = await axios.post(
+      await axios.post(
         `/api/posts/edit/${post._id}`,
         { postData: upload },
         {
@@ -43,18 +43,13 @@ export const UpdatePost = ({ post, editClose }) => {
       dispatch({
         type: 'HELPER',
       });
-
+      setEmojiOpen(false);
       toast.success('Post is updated Successfully');
-      console.log(response.data.posts);
     } catch (error) {
       console.log(error);
       toast.warning('Please First Sign In');
     }
   };
-
-  // useEffect(() => {
-  //   newPostRef.current.innerHTML = post.content;
-  // }, []);
 
   return (
     <div
@@ -91,7 +86,7 @@ export const UpdatePost = ({ post, editClose }) => {
         }}
       >
         <textarea
-          value={upload.content}
+          value={upload?.content}
           onChange={(event) =>
             setUpload({
               ...upload,
@@ -102,7 +97,6 @@ export const UpdatePost = ({ post, editClose }) => {
             width: '90%',
             textAlign: 'left',
             padding: '10px',
-            height: '100%',
             border: 'none',
             marginBottom: '5px',
             fontSize: '18px',
@@ -117,30 +111,11 @@ export const UpdatePost = ({ post, editClose }) => {
             outline: 'none',
           }}
         />
-        {/* <div
-          role="textbox"
-          ref={newPostRef}
-          placeholder="What's happening?"
-          contentEditable
-          suppressContentEditableWarning={true}
-          style={{
-            width: '90%',
-            textAlign: 'left',
-            padding: '10px',
-            height: '100%',
-            border: 'none',
-            marginBottom: '20px',
-            fontSize: '18px',
-            color: 'white',
-          }}
-          onInput={(event) =>
-            setUpload({ ...upload, content: event.currentTarget.innerHTML })
-          }
-        ></div> */}
-        {upload.mediaURL.length > 0 && (
+
+        {upload?.mediaURL?.length > 0 && (
           <div style={{ position: 'relative' }}>
             <img
-              src={upload.mediaURL}
+              src={upload?.mediaURL}
               style={{ height: '100%', width: '100%' }}
             />
             <Icon
@@ -192,32 +167,33 @@ export const UpdatePost = ({ post, editClose }) => {
               onClick={() => setEmojiOpen(!emojiOpen)}
             />
           </div>
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '-190px',
-              border: '1px solid gray',
-              borderRadius: '5px',
-              padding: '3px',
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
-              backgroundColor: 'rgb(41, 49, 76)',
-              zIndex: 5,
-            }}
-          >
-            {emojiOpen &&
-              emojis.map((emoji) => (
+          {emojiOpen && (
+            <div
+              style={{
+                position: 'absolute',
+                top: '200px',
+                border: '1px solid gray',
+                borderRadius: '5px',
+                padding: '3px',
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
+                backgroundColor: 'rgb(41, 49, 76)',
+                zIndex: 5,
+              }}
+            >
+              {emojis?.map((emoji) => (
                 <div
                   className="select-button"
                   onClick={() => {
-                    setUpload({ ...upload, content: upload.content + emoji });
+                    setUpload({ ...upload, content: upload?.content + emoji });
                   }}
                   style={{ padding: '5px', cursor: 'pointer' }}
                 >
                   {emoji}
                 </div>
               ))}
-          </div>
+            </div>
+          )}
           <input
             type="file"
             accept="image/*"

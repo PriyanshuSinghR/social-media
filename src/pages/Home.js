@@ -1,12 +1,9 @@
 import { Icon } from '@iconify/react';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-
 import { Hero } from '../components/Hero';
 import { NewPost } from '../components/NewPost';
-
 import { PostShow } from '../components/PostShow';
 import { SocialContext } from '../context/SocialContext';
-
 import { useClickOutside } from '../customHooks/useClickOutside';
 
 export const Home = () => {
@@ -16,6 +13,18 @@ export const Home = () => {
   const modalRef = useRef();
 
   useClickOutside(modalRef, setShowSortModal);
+  useEffect(() => {
+    dispatch({
+      type: 'LOADING_STATUS',
+      payload: true,
+    });
+    setTimeout(() => {
+      dispatch({
+        type: 'LOADING_STATUS',
+        payload: false,
+      });
+    }, 500);
+  }, []);
 
   return (
     <Hero>

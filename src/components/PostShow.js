@@ -1,12 +1,10 @@
-import axios from 'axios';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import { PostCard } from './PostCard';
 import { SocialContext } from '../context/SocialContext';
 import { getSortedProducts } from '../utils';
 
 export const PostShow = () => {
   const { state } = useContext(SocialContext);
-  console.log(state.mySelf);
 
   var postOfFollowingUsers = state?.allPosts?.filter((post) =>
     state?.mySelf?.following?.some(
@@ -22,9 +20,9 @@ export const PostShow = () => {
   const sortedPost = getSortedProducts(timelinePosts, state.sort);
   return (
     <div>
-      {sortedPost.map((post) => (
+      {sortedPost?.map((post) => (
         <div>
-          <PostCard post={post} />
+          <PostCard id={post._id} />
         </div>
       ))}
     </div>

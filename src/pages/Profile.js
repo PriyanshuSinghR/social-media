@@ -32,6 +32,10 @@ export const Profile = () => {
   };
 
   const getUser = async () => {
+    dispatch({
+      type: 'LOADING_STATUS',
+      payload: true,
+    });
     try {
       const response = await axios.get(`/api/users/${profileId}`);
       setUser(response.data.user);
@@ -42,7 +46,10 @@ export const Profile = () => {
           `/api/posts/user/${response.data.user.username}`,
         );
         setPosts(res.data.posts);
-        console.log(res.data.posts);
+        dispatch({
+          type: 'LOADING_STATUS',
+          payload: false,
+        });
       } catch (error) {
         console.log(error);
       }
@@ -55,6 +62,16 @@ export const Profile = () => {
     localStorage.removeItem('tokenuser');
     localStorage.removeItem('user');
     toast.success('Logout Successfully');
+    dispatch({
+      type: 'LOADING_STATUS',
+      payload: true,
+    });
+    setTimeout(() => {
+      dispatch({
+        type: 'LOADING_STATUS',
+        payload: false,
+      });
+    }, 500);
 
     dispatch({
       type: 'LOGIN_STATUS',
@@ -85,7 +102,7 @@ export const Profile = () => {
       });
       toggleEdit();
       console.log(response.data.user);
-      // toast.success('Added to Wishlist');
+      toast.success('Updated Successfully');
       // console.log(response.data);
     } catch (error) {
       console.log(error);
@@ -94,7 +111,7 @@ export const Profile = () => {
 
   useEffect(() => {
     getUser();
-  }, [state.allSuggestions, state.helper]);
+  }, [state.allSuggestions, state.helper, profileId]);
 
   return (
     <Hero>
@@ -189,7 +206,7 @@ export const Profile = () => {
                                 Avatar
                               </p>
                               <img
-                                src={editUser.image}
+                                src={editUser?.image}
                                 style={{
                                   width: '50px',
                                   height: '50px',
@@ -204,7 +221,7 @@ export const Profile = () => {
                                 Username
                               </p>
                               <p style={{ margin: '5px', padding: '7px' }}>
-                                {editUser.username}
+                                {editUser?.username}
                               </p>
                             </div>
                             <div style={{ display: 'flex' }}>
@@ -219,7 +236,7 @@ export const Profile = () => {
                                     firstName: event.target.value,
                                   })
                                 }
-                                value={editUser.firstName}
+                                value={editUser?.firstName}
                                 style={{
                                   backgroundColor: 'transparent',
                                   border: '1px solid white',
@@ -241,7 +258,7 @@ export const Profile = () => {
                                     lastName: event.target.value,
                                   })
                                 }
-                                value={editUser.lastName}
+                                value={editUser?.lastName}
                                 style={{
                                   backgroundColor: 'transparent',
                                   border: '1px solid white',
@@ -263,7 +280,7 @@ export const Profile = () => {
                                     bio: event.target.value,
                                   })
                                 }
-                                value={editUser.bio}
+                                value={editUser?.bio}
                                 style={{
                                   backgroundColor: 'transparent',
                                   border: '1px solid white',
@@ -285,7 +302,7 @@ export const Profile = () => {
                                     website: event.target.value,
                                   })
                                 }
-                                value={editUser.website}
+                                value={editUser?.website}
                                 style={{
                                   backgroundColor: 'transparent',
                                   border: '1px solid white',
@@ -338,7 +355,7 @@ export const Profile = () => {
                   />
                 </div>
               </div>
-            ) : state.mySelf.following.reduce(
+            ) : state?.mySelf?.following?.reduce(
                 (acc, curr) => (curr?.username === user?.username ? true : acc),
                 false,
               ) ? (
@@ -464,7 +481,7 @@ export const Profile = () => {
               <div>
                 <Popup
                   content={
-                    user.followers.length === 0 ? (
+                    user?.followers?.length === 0 ? (
                       <h3 style={{ margin: '0' }}>No followers Yet</h3>
                     ) : (
                       <div
@@ -475,7 +492,7 @@ export const Profile = () => {
                         }}
                       >
                         <h3 style={{ margin: '0' }}>Followers</h3>
-                        {user.followers.map((follow) => (
+                        {user?.followers?.map((follow) => (
                           <div
                             style={{
                               display: 'flex',
@@ -486,7 +503,7 @@ export const Profile = () => {
                           >
                             <div>
                               <img
-                                src={follow.image}
+                                src={follow?.image}
                                 style={{
                                   height: '35px',
                                   width: '35px',
@@ -498,9 +515,9 @@ export const Profile = () => {
                             <div style={{ margin: '10px', width: '150px' }}>
                               <p
                                 style={{ fontSize: '16px', margin: '0px' }}
-                              >{`${follow.firstName} ${follow.lastName}`}</p>
+                              >{`${follow?.firstName} ${follow?.lastName}`}</p>
                               <p style={{ fontSize: '14px', margin: '0px' }}>
-                                @{follow.username}
+                                @{follow?.username}
                               </p>
                             </div>
                           </div>
@@ -516,7 +533,7 @@ export const Profile = () => {
               <div>
                 <Popup
                   content={
-                    user.following.length === 0 ? (
+                    user?.following?.length === 0 ? (
                       <h3 style={{ margin: '0' }}>No following Yet</h3>
                     ) : (
                       <div
@@ -527,7 +544,7 @@ export const Profile = () => {
                         }}
                       >
                         <h3 style={{ margin: '0' }}>Following</h3>
-                        {user.following.map((follow) => (
+                        {user?.following?.map((follow) => (
                           <div
                             style={{
                               display: 'flex',
@@ -538,7 +555,7 @@ export const Profile = () => {
                           >
                             <div>
                               <img
-                                src={follow.image}
+                                src={follow?.image}
                                 style={{
                                   height: '35px',
                                   width: '35px',
@@ -550,9 +567,9 @@ export const Profile = () => {
                             <div style={{ margin: '10px', width: '150px' }}>
                               <p
                                 style={{ fontSize: '16px', margin: '0px' }}
-                              >{`${follow.firstName} ${follow.lastName}`}</p>
+                              >{`${follow?.firstName} ${follow?.lastName}`}</p>
                               <p style={{ fontSize: '14px', margin: '0px' }}>
-                                @{follow.username}
+                                @{follow?.username}
                               </p>
                             </div>
                           </div>
@@ -570,9 +587,9 @@ export const Profile = () => {
       <div
         style={{ borderTop: '1px solid gray', width: '95%', margin: 'auto' }}
       ></div>
-      {posts.map((post) => (
+      {posts?.map((post) => (
         <div>
-          <PostCard post={post} />
+          <PostCard id={post?._id} />
         </div>
       ))}
     </Hero>

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import { SocialContext } from '../context/SocialContext';
 import { toast } from 'react-toastify';
@@ -21,6 +21,17 @@ const NavigationBar = () => {
     toast.success('Logout Successfully');
 
     dispatch({
+      type: 'LOADING_STATUS',
+      payload: true,
+    });
+    setTimeout(() => {
+      dispatch({
+        type: 'LOADING_STATUS',
+        payload: false,
+      });
+    }, 500);
+
+    dispatch({
       type: 'LOGIN_STATUS',
       payload: false,
     });
@@ -31,8 +42,6 @@ const NavigationBar = () => {
   const allUsers = async () => {
     try {
       const response = await axios.get(`/api/users`);
-      console.log(response.data.users);
-
       dispatch({
         type: 'UPDATE_USERS',
         payload: response.data.users,
@@ -43,23 +52,6 @@ const NavigationBar = () => {
   };
 
   const search = getSearchedUser(state.allUsers, state.searchInput);
-
-  // useEffect(() => {
-  //   if (state.searchInput.length > 0) {
-  //     dispatch({
-  //       type: 'UPDATE_PRODUCTS',
-  //       payload: [...state.allProducts].filter((item) =>
-  //         item.name.toLowerCase().includes(state.searchInput.toLowerCase()),
-  //       ),
-  //     });
-  //     history('./');
-  //   } else {
-  //     dispatch({
-  //       type: 'UPDATE_PRODUCTS',
-  //       payload: [...state.allProducts],
-  //     });
-  //   }
-  // }, [state.searchInput]);
 
   useEffect(() => {
     allUsers();
@@ -112,16 +104,17 @@ const NavigationBar = () => {
         onClick={togglePopup}
       >
         <img
-          src={user.image}
+          src={user?.image}
           style={{
             height: '50px',
             width: '50px',
             borderRadius: '50% 50%',
             padding: '10px 0px',
           }}
+          alt="User Profile"
         ></img>
         <div style={{ padding: '25px 0px', marginLeft: '10px' }}>
-          {user.firstName}
+          {user?.firstName}
         </div>
         <Icon
           icon="ep:arrow-down-bold"
@@ -149,7 +142,7 @@ const NavigationBar = () => {
             className="nav-down"
           >
             <Link
-              to={`/profile/${user._id}`}
+              to={`/profile/${user?._id}`}
               style={{
                 textDecoration: 'none',
                 color: '#4361EE',
@@ -184,7 +177,7 @@ const NavigationBar = () => {
         >
           {search?.map((e) => (
             <Link
-              to={`/profile/${e._id}`}
+              to={`/profile/${e?._id}`}
               style={{
                 display: 'flex',
                 cursor: 'pointer',
@@ -207,6 +200,7 @@ const NavigationBar = () => {
                     borderRadius: '50% 50%',
                     padding: '10px 0px',
                   }}
+                  alt="search user"
                 ></img>
               </div>
               <div style={{ margin: '10px', width: '150px' }}>

@@ -1,6 +1,5 @@
 import axios from 'axios';
-import { createContext, useEffect, useReducer, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { createContext, useEffect, useReducer } from 'react';
 import { toast } from 'react-toastify';
 
 export const SocialContext = createContext();
@@ -9,6 +8,8 @@ const reduceSocial = (state, action) => {
   switch (action.type) {
     case 'LOGIN_STATUS':
       return { ...state, isLoggedIn: action.payload };
+    case 'LOADING_STATUS':
+      return { ...state, isLoading: action.payload };
     case 'SEARCH_PRODUCTS':
       return {
         ...state,
@@ -57,7 +58,6 @@ const reduceSocial = (state, action) => {
 };
 
 export function SocialProvider({ children }) {
-  const history = useNavigate();
   const [state, dispatch] = useReducer(reduceSocial, {
     allPosts: [],
     searchInput: '',
@@ -68,6 +68,7 @@ export function SocialProvider({ children }) {
     allUsers: [],
     allSuggestions: [],
     sort: 'LATEST',
+    isLoading: false,
   });
 
   const getUser = async () => {
@@ -96,36 +97,11 @@ export function SocialProvider({ children }) {
         type: 'UPDATE_SUGGESTIONS',
         payload: response.data.users.filter((user) => user._id !== mySelf._id),
       });
-
-      // setUsers(response.data.users.reduce((acc,curr) =>{
-      //    if(user._id === mySelf._id){
-      //     return acc;
-      //    }
-      //    if()
-      //   },[]));
     } catch (error) {
       console.log(error);
     }
   };
 
-  const getToBookmark = async () => {
-    const encodedToken = localStorage.getItem('tokenuser');
-
-    try {
-      const response = await axios.get(`/api/users/bookmark`, {
-        headers: {
-          authorization: encodedToken,
-        },
-      });
-      console.log(response.data);
-      dispatch({
-        type: 'UPDATE_BOOKMARK',
-        payload: response.data.bookmarks,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
   const removePost = async (id) => {
     const encodedToken = localStorage.getItem('tokenuser');
     try {
@@ -138,11 +114,28 @@ export function SocialProvider({ children }) {
         type: 'UPDATE_POSTS',
         payload: response.data.posts,
       });
-      dispatch({
-        type: 'HELPER',
-      });
+      try {
+        const res = await axios.post(
+          `/api/users/remove-bookmark/${id}`,
+          {},
+          {
+            headers: {
+              authorization: encodedToken,
+            },
+          },
+        );
+        dispatch({
+          type: 'HELPER',
+        });
 
-      console.log(response.data.posts);
+        dispatch({
+          type: 'UPDATE_BOOKMARK',
+          payload: res.data.bookmarks,
+        });
+        toast.success('Post Deleted');
+      } catch (error) {
+        console.log(error);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -169,9 +162,7 @@ export function SocialProvider({ children }) {
           (u) => u._id !== response.data.followUser._id,
         ),
       });
-      console.log(response.data.followUser);
-      // toast.success('Added to Wishlist');
-      // console.log(response.data);
+      toast.success('Followed');
     } catch (error) {
       console.log(error);
     }
@@ -196,8 +187,7 @@ export function SocialProvider({ children }) {
         type: 'UPDATE_SUGGESTIONS',
         payload: [...state.allSuggestions, response.data.followUser],
       });
-      // toast.success('Added to Wishlist');
-      // console.log(response.data);
+      toast.success('Unfollow');
     } catch (error) {
       console.log(error);
     }
@@ -210,28 +200,6 @@ export function SocialProvider({ children }) {
         type: 'UPDATE_POSTS',
         payload: response.data.posts,
       });
-
-      console.log(response.data.posts);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const addToCart = async (product) => {
-    const encodedToken = localStorage.getItem('tokenuser');
-
-    try {
-      const response = await axios.post(
-        `/api/user/cart`,
-        { product },
-        {
-          headers: {
-            authorization: encodedToken,
-          },
-        },
-      );
-
-      console.log(response);
     } catch (error) {
       console.log(error);
     }

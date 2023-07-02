@@ -1,6 +1,5 @@
 import { Icon } from '@iconify/react';
-import axios from 'axios';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { SuggestionCard } from './SuggestionCard';
 import { SocialContext } from '../context/SocialContext';
@@ -14,7 +13,6 @@ export const Hero = ({ children }) => {
   const togglePost = () => setOpen(!open);
 
   const getActiveStyle = ({ isActive }) => ({
-    color: 'white',
     textDecoration: 'none',
     marginRight: '20px',
     display: 'flex',
@@ -154,7 +152,7 @@ export const Hero = ({ children }) => {
         <p style={{ fontSize: '18px', fontWeight: 'bold' }}>
           Suggestions for You
         </p>
-        {state.allSuggestions.map((user) => (
+        {state?.allSuggestions?.map((user) => (
           <div>
             <SuggestionCard user={user} />
           </div>
