@@ -206,10 +206,10 @@ export function SocialProvider({ children }) {
   };
 
   useEffect(() => {
+    getUser();
     getSuggestions();
     getPosts();
-    getUser();
-  }, []);
+  }, [state.isLoggedIn]);
 
   useEffect(() => {
     getUser();
