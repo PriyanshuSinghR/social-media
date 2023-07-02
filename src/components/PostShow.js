@@ -5,20 +5,21 @@ import { getSortedProducts } from '../utils';
 
 export const PostShow = () => {
   const { state } = useContext(SocialContext);
+  const user = JSON.parse(localStorage.getItem('user'));
 
   var postOfFollowingUsers = state?.allPosts?.filter((post) =>
-    state?.mySelf?.following?.some(
+    user?.following?.some(
       (followingUser) => followingUser?.username === post?.username,
     ),
   );
 
   const postsOfUser = state?.allPosts?.filter(
-    (post) => post?.username === state?.mySelf?.username,
+    (post) => post?.username === user?.username,
   );
 
   const timelinePosts = [...postOfFollowingUsers, ...postsOfUser];
   const sortedPost = getSortedProducts(timelinePosts, state.sort);
-  console.log(state.mySelf);
+  console.log(user);
   return (
     <div>
       {sortedPost?.map((post) => (
