@@ -171,7 +171,7 @@ export const UpdatePost = ({ post, editClose }) => {
             <div
               style={{
                 position: 'absolute',
-                top: '200px',
+                bottom: '-189px',
                 border: '1px solid gray',
                 borderRadius: '5px',
                 padding: '3px',

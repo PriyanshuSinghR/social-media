@@ -10,7 +10,7 @@ export const Popup = (props) => {
         height: '100vh',
         top: 0,
         left: 0,
-        zIndex: 1,
+        zIndex: 2,
       }}
     >
       <div

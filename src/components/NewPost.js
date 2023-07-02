@@ -171,14 +171,14 @@ export const NewPost = ({ handleToggle }) => {
             <div
               style={{
                 position: 'absolute',
-                top: '200px',
+                bottom: '-189px',
                 border: '1px solid gray',
                 borderRadius: '5px',
                 padding: '3px',
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
                 backgroundColor: 'rgb(41, 49, 76)',
-                zIndex: 5,
+                zIndex: 1,
               }}
             >
               {emojis?.map((emoji) => (
