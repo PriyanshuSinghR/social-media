@@ -8,7 +8,7 @@ import { emojis } from '../utils';
 export const NewPost = ({ handleToggle }) => {
   const user = JSON.parse(localStorage.getItem('user'));
 
-  const { dispatch } = useContext(SocialContext);
+  const { state, dispatch } = useContext(SocialContext);
   const [upload, setUpload] = useState({
     content: '',
     mediaURL: '',
@@ -30,7 +30,7 @@ export const NewPost = ({ handleToggle }) => {
       if (upload.content === '') {
         throw Error;
       }
-      await axios.post(
+      const response = await axios.post(
         `/api/posts`,
         { postData: upload },
         {
@@ -41,6 +41,13 @@ export const NewPost = ({ handleToggle }) => {
       );
       dispatch({
         type: 'HELPER',
+      });
+      dispatch({
+        type: 'UPDATE_COMMENTS',
+        payload: [
+          ...state.commentPost,
+          response.data.posts.find((e) => e.content === upload.content),
+        ],
       });
 
       toast.success('New Post is Successfully Uploaded');

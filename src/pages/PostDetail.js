@@ -11,6 +11,8 @@ export const PostDetail = () => {
 
   const { state, dispatch } = useContext(SocialContext);
 
+  const postComments = state?.commentPost?.find((c) => c._id === postId);
+
   const getPost = async () => {
     dispatch({
       type: 'LOADING_STATUS',
@@ -37,11 +39,11 @@ export const PostDetail = () => {
     <Hero>
       <PostCard id={postId} />
 
-      {post?.comments?.length === 0 ? (
+      {postComments?.comments?.length === 0 ? (
         <h3 style={{ margin: '40px auto', width: '60%' }}>No comments</h3>
       ) : (
         <div>
-          {post?.comments?.map((comment) => (
+          {postComments?.comments?.map((comment) => (
             <div
               style={{
                 display: 'flex',

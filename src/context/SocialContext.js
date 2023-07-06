@@ -20,6 +20,11 @@ const reduceSocial = (state, action) => {
         ...state,
         allPosts: action.payload,
       };
+    case 'UPDATE_COMMENTS':
+      return {
+        ...state,
+        commentPost: action.payload,
+      };
     case 'UPDATE_BOOKMARK':
       return {
         ...state,
@@ -69,6 +74,7 @@ export function SocialProvider({ children }) {
     allSuggestions: [],
     sort: 'LATEST',
     isLoading: false,
+    commentPost: [],
   });
 
   const getUser = async () => {
@@ -113,6 +119,10 @@ export function SocialProvider({ children }) {
       dispatch({
         type: 'UPDATE_POSTS',
         payload: response.data.posts,
+      });
+      dispatch({
+        type: 'UPDATE_COMMENTS',
+        payload: state.commentPost.filter((c) => c._id !== id),
       });
       try {
         const res = await axios.post(
@@ -204,6 +214,21 @@ export function SocialProvider({ children }) {
       console.log(error);
     }
   };
+  const getComments = async () => {
+    try {
+      const response = await axios.get(`/api/posts`);
+      dispatch({
+        type: 'UPDATE_COMMENTS',
+        payload: response.data.posts,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getComments();
+  }, []);
 
   useEffect(() => {
     getUser();

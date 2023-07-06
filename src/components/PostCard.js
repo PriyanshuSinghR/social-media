@@ -15,6 +15,7 @@ export const PostCard = ({ id }) => {
   const [user, setUser] = useState({ name: '', url: '', userId: '' });
   const [open, setOpen] = useState(false);
   const [post, setPost] = useState({});
+  const [commPost, setCommPost] = useState({});
   const [showEdit, setShowEdit] = useState(false);
   const [showComment, setShowComment] = useState(false);
   const [comment, setComment] = useState('');
@@ -44,6 +45,10 @@ export const PostCard = ({ id }) => {
       console.log(error);
     }
   };
+
+  const postComments = () =>
+    setCommPost(state?.commentPost?.find((c) => c._id === id));
+  console.log(state.commentPost);
 
   const likingPost = async () => {
     const encodedToken = localStorage.getItem('tokenuser');
@@ -144,13 +149,15 @@ export const PostCard = ({ id }) => {
     }
   };
 
+  // console.log(post);
+
   const commentPost = () => {
     const uPost = {
-      ...post,
+      ...commPost,
       comments: [
-        ...post?.comments,
+        ...commPost?.comments,
         {
-          _id: '',
+          _id: '123',
           comment: comment,
           firstName: state.mySelf.firstName,
           lastName: state.mySelf.lastName,
@@ -159,10 +166,17 @@ export const PostCard = ({ id }) => {
         },
       ],
     };
+
+    // console.log(uPost);
+
     dispatch({
-      type: 'UPDATE_POSTS',
-      payload: state.allPosts.map((p) => (p._id === id ? uPost : p)),
+      type: 'UPDATE_COMMENTS',
+      payload: state?.commentPost?.map((p) => (p._id === id ? uPost : p)),
     });
+    dispatch({
+      type: 'HELPER',
+    });
+    setComment('');
     setShowComment(false);
   };
 
@@ -190,6 +204,7 @@ export const PostCard = ({ id }) => {
 
   useEffect(() => {
     getPost();
+    postComments();
   }, [id, state.helper]);
   return (
     <div
@@ -274,6 +289,7 @@ export const PostCard = ({ id }) => {
         {post?.mediaURL?.length > 0 && (
           <div>
             <img
+              alt="Post"
               src={post?.mediaURL}
               style={{ height: '100%', width: '100%' }}
             />
@@ -325,9 +341,9 @@ export const PostCard = ({ id }) => {
             style={{ cursor: 'pointer' }}
             onClick={() => setShowComment(!showComment)}
           />
-          {post?.comments?.length > 0 && (
+          {commPost?.comments?.length > 0 && (
             <div style={{ fontSize: '16px', marginLeft: '10px' }}>
-              {post?.comments?.length}
+              {commPost?.comments?.length}
             </div>
           )}
         </div>
@@ -368,16 +384,23 @@ export const PostCard = ({ id }) => {
               >
                 Edit
               </div>
-              <div
-                style={{ padding: '10px', cursor: 'pointer' }}
+              <Link
+                style={{
+                  padding: '10px',
+                  cursor: 'pointer',
+                  textDecoration: 'none',
+                  color: 'red',
+                  display: 'block',
+                }}
                 className="select-button"
                 onClick={() => {
                   removePost(post?._id);
                   setOpen(!open);
                 }}
+                to="/"
               >
                 Delete
-              </div>
+              </Link>
             </div>
           ) : state?.mySelf?.following?.reduce(
               (acc, curr) => (curr?.username === post?.username ? true : acc),
