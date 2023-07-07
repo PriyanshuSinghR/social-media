@@ -7,7 +7,7 @@ import { emojis } from '../utils';
 
 export const UpdatePost = ({ post, editClose }) => {
   const user = JSON.parse(localStorage.getItem('user'));
-  const { dispatch } = useContext(SocialContext);
+  const { state, dispatch } = useContext(SocialContext);
 
   const [upload, setUpload] = useState({
     content: post.content,
@@ -68,7 +68,7 @@ export const UpdatePost = ({ post, editClose }) => {
     >
       <div>
         <img
-          src={user?.image}
+          src={state?.mySelf?.image}
           style={{
             height: '50px',
             width: '50px',

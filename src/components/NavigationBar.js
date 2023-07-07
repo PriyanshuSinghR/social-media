@@ -19,6 +19,10 @@ const NavigationBar = () => {
     localStorage.removeItem('tokenuser');
     localStorage.removeItem('user');
     toast.success('Logout Successfully');
+    dispatch({
+      type: 'UPDATE_MYSELF',
+      payload: {},
+    });
 
     dispatch({
       type: 'LOADING_STATUS',
@@ -50,6 +54,8 @@ const NavigationBar = () => {
       console.log(error);
     }
   };
+
+  console.log(state.mySelf);
 
   const search = getSearchedUser(state.allUsers, state.searchInput);
 
@@ -104,7 +110,7 @@ const NavigationBar = () => {
         onClick={togglePopup}
       >
         <img
-          src={user?.image}
+          src={state?.mySelf?.image}
           style={{
             height: '50px',
             width: '50px',
@@ -114,7 +120,7 @@ const NavigationBar = () => {
           alt="User Profile"
         ></img>
         <div style={{ padding: '25px 0px', marginLeft: '10px' }}>
-          {user?.firstName}
+          {state?.mySelf?.firstName}
         </div>
         <Icon
           icon="ep:arrow-down-bold"
@@ -142,7 +148,7 @@ const NavigationBar = () => {
             className="nav-down"
           >
             <Link
-              to={`/profile/${user?._id}`}
+              to={`/profile/${state?.mySelf?._id}`}
               style={{
                 textDecoration: 'none',
                 color: '#4361EE',

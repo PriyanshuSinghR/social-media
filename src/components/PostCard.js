@@ -48,7 +48,6 @@ export const PostCard = ({ id }) => {
 
   const postComments = () =>
     setCommPost(state?.commentPost?.find((c) => c._id === id));
-  console.log(state.commentPost);
 
   const likingPost = async () => {
     const encodedToken = localStorage.getItem('tokenuser');

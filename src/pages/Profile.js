@@ -97,9 +97,16 @@ export const Profile = () => {
           },
         },
       );
+
+      dispatch({
+        type: 'UPDATE_MYSELF',
+        payload: response.data.user,
+      });
+
       dispatch({
         type: 'HELPER',
       });
+
       toggleEdit();
       console.log(response.data.user);
       toast.success('Updated Successfully');

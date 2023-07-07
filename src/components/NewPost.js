@@ -75,7 +75,7 @@ export const NewPost = ({ handleToggle }) => {
     >
       <div>
         <img
-          src={user?.image}
+          src={state?.mySelf?.image}
           style={{
             height: '50px',
             width: '50px',

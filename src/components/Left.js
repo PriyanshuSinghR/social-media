@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { SocialContext } from '../context/SocialContext';
 import { toast } from 'react-toastify';
+import { faker } from '@faker-js/faker';
 
 export const Left = ({ login }) => {
   const navigate = useNavigate();
@@ -25,13 +26,14 @@ export const Left = ({ login }) => {
   const postData = async (e) => {
     e.preventDefault();
     const { username, password, firstName, lastName } = user;
+    const image = faker.image.avatar();
     console.log(user);
     const res = await fetch('/api/auth/signup', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
       },
-      body: JSON.stringify({ username, password, firstName, lastName }),
+      body: JSON.stringify({ username, password, firstName, lastName, image }),
     });
 
     const data = await res.json();
