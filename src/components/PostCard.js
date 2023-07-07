@@ -73,6 +73,7 @@ export const PostCard = ({ id }) => {
       console.log(error);
     }
   };
+
   const dislikingPost = async () => {
     const encodedToken = localStorage.getItem('tokenuser');
     try {
@@ -97,6 +98,7 @@ export const PostCard = ({ id }) => {
       console.log(error);
     }
   };
+
   const addToBookmark = async () => {
     const encodedToken = localStorage.getItem('tokenuser');
     try {
@@ -122,6 +124,7 @@ export const PostCard = ({ id }) => {
       console.log(error);
     }
   };
+
   const removeFromBookmark = async () => {
     const encodedToken = localStorage.getItem('tokenuser');
     try {
@@ -147,8 +150,6 @@ export const PostCard = ({ id }) => {
       console.log(error);
     }
   };
-
-  // console.log(post);
 
   const commentPost = () => {
     const uPost = {

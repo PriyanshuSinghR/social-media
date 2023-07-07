@@ -9,7 +9,6 @@ import { getSearchedUser } from '../utils';
 const NavigationBar = () => {
   const { state, dispatch } = useContext(SocialContext);
   const history = useNavigate();
-  const user = JSON.parse(localStorage.getItem('user'));
   const [isOpen, setIsOpen] = useState(false);
 
   const togglePopup = () => {
@@ -54,8 +53,6 @@ const NavigationBar = () => {
       console.log(error);
     }
   };
-
-  console.log(state.mySelf);
 
   const search = getSearchedUser(state.allUsers, state.searchInput);
 

@@ -6,7 +6,6 @@ import { SocialContext } from '../context/SocialContext';
 import { emojis } from '../utils';
 
 export const UpdatePost = ({ post, editClose }) => {
-  const user = JSON.parse(localStorage.getItem('user'));
   const { state, dispatch } = useContext(SocialContext);
 
   const [upload, setUpload] = useState({

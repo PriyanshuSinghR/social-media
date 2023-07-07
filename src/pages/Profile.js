@@ -23,7 +23,7 @@ export const Profile = () => {
 
   const hiddenFileInput = useRef(null);
 
-  const handleImageClick = (event) => {
+  const handleImageClick = () => {
     hiddenFileInput.current.click();
   };
   const handleImageChange = (event) => {
@@ -40,7 +40,6 @@ export const Profile = () => {
       const response = await axios.get(`/api/users/${profileId}`);
       setUser(response.data.user);
       setEditUser(response.data.user);
-      console.log(response.data.user);
       try {
         const res = await axios.get(
           `/api/posts/user/${response.data.user.username}`,
@@ -108,7 +107,6 @@ export const Profile = () => {
       });
 
       toggleEdit();
-      console.log(response.data.user);
       toast.success('Updated Successfully');
       // console.log(response.data);
     } catch (error) {

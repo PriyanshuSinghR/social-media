@@ -5,7 +5,6 @@ import { PostCard } from '../components/PostCard';
 
 export const Bookmark = () => {
   const { state, dispatch } = useContext(SocialContext);
-  console.log(state.bookmarkPosts);
   useEffect(() => {
     dispatch({
       type: 'LOADING_STATUS',

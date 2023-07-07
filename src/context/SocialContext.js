@@ -86,7 +86,6 @@ export function SocialProvider({ children }) {
         type: 'UPDATE_MYSELF',
         payload: response.data.user,
       });
-      console.log(response.data.user);
     } catch (error) {
       console.log(error);
     }
@@ -97,7 +96,6 @@ export function SocialProvider({ children }) {
 
     try {
       const response = await axios.get(`/api/users`);
-      console.log(response.data.users);
 
       dispatch({
         type: 'UPDATE_SUGGESTIONS',
@@ -214,6 +212,7 @@ export function SocialProvider({ children }) {
       console.log(error);
     }
   };
+
   const getComments = async () => {
     try {
       const response = await axios.get(`/api/posts`);

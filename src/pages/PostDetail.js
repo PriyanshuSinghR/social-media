@@ -1,39 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { Hero } from '../components/Hero';
 import { PostCard } from '../components/PostCard';
-import axios from 'axios';
 import { SocialContext } from '../context/SocialContext';
 
 export const PostDetail = () => {
   const { postId } = useParams();
-  const [post, setPost] = useState({});
-
-  const { state, dispatch } = useContext(SocialContext);
-
+  const { state } = useContext(SocialContext);
   const postComments = state?.commentPost?.find((c) => c._id === postId);
-
-  const getPost = async () => {
-    dispatch({
-      type: 'LOADING_STATUS',
-      payload: true,
-    });
-    try {
-      const response = await axios.get(`/api/posts/${postId}`);
-      setPost(response.data.post);
-
-      dispatch({
-        type: 'LOADING_STATUS',
-        payload: false,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    getPost();
-  }, [state.helper, postId]);
 
   return (
     <Hero>

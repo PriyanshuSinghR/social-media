@@ -27,7 +27,6 @@ export const Left = ({ login }) => {
     e.preventDefault();
     const { username, password, firstName, lastName } = user;
     const image = faker.image.avatar();
-    console.log(user);
     const res = await fetch('/api/auth/signup', {
       method: 'POST',
       headers: {
@@ -39,13 +38,10 @@ export const Left = ({ login }) => {
     const data = await res.json();
     localStorage.setItem('tokenuser', data.encodedToken);
 
-    console.log(data.createdUser);
     if (res.status === 422 || !data) {
       toast.error('Invalid Registration');
-      console.log('Invalid Registration');
     } else {
       toast.success('Registration Successfully');
-      console.log('Registration Successfully');
       dispatch({
         type: 'LOGIN_STATUS',
         payload: true,
@@ -66,13 +62,10 @@ export const Left = ({ login }) => {
     });
     const data = await res.json();
     localStorage.setItem('tokenuser', data.encodedToken);
-    console.log(data.foundUser);
     if (res.status === 404 || res.status === 401 || !data) {
       toast.error('Invalid Credential');
-      console.log('Invalid Credential');
     } else {
       toast.success('Sign in Successfully');
-      console.log('Sign in Successfully');
       dispatch({
         type: 'LOGIN_STATUS',
         payload: true,
@@ -94,13 +87,10 @@ export const Left = ({ login }) => {
     const data = await res.json();
     localStorage.setItem('tokenuser', data.encodedToken);
 
-    console.log(JSON.stringify({ username, password }));
     if (res.status === 404 || res.status === 401 || !data) {
       toast.error('Invalid Credential');
-      console.log('Invalid Credential');
     } else {
       toast.success('Sign in Successfully');
-      console.log('Sign in Successfully');
       dispatch({
         type: 'LOGIN_STATUS',
         payload: true,
